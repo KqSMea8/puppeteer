@@ -1,25 +1,23 @@
 const path = require('path');
 const puppeteer = require('puppeteer');
-(async ()=>{
-    //puppeteer.launch 启动浏览器实例
-    const browser = await(puppeteer.launch({
-        //若是手动下载的chromium需要指定chromium地址, 默认引用地址为 /项目目录/node_modules/puppeteer/.local-chromium/
-        //executablePath:''
-        //设置超时时间
-        // timeout: 15000,
-        //如果是访问https页面 此属性会忽略https错误
-        // ignoreHTTPSErrors: true,
-        //打开开发者工具, 当此值为true时, headless总为false
-        // devtools: false,
-        //关闭headless模式，不会打开浏览器，默认为true
-        headless: false,
 
-        //浏览器的配置参数
-        //第一个为禁用沙坑
-        //第二个属性没有找到
-        // args: ['--no-sandbox', '--disable-dev-shm-usage']
-    }));
-    //创建一个新页面
+puppeteer.launch({
+    //若是手动下载的chromium需要指定chromium地址, 默认引用地址为 /项目目录/node_modules/puppeteer/.local-chromium/
+    //executablePath:''
+    //设置超时时间
+    // timeout: 15000,
+    //如果是访问https页面 此属性会忽略https错误
+    // ignoreHTTPSErrors: true,
+    //打开开发者工具, 当此值为true时, headless总为false
+    // devtools: false,
+    //关闭headless模式，不会打开浏览器，默认为true
+    headless: false,
+
+    //浏览器的配置参数
+    //第一个为禁用沙坑
+    //第二个属性没有找到
+    // args: ['--no-sandbox', '--disable-dev-shm-usage']
+}).then(async browser=>{
     const page = await browser.newPage();
     //进入指定网页
     await page.goto('https://www.jianshu.com/u/44f4741df63a');
@@ -41,13 +39,12 @@ const puppeteer = require('puppeteer');
         // }
     })
 
-    //页面滚动到底
-    await autoScroll(page);
-
     /**
      * 截图2
      * 针对懒加载采用滚动到底的方式来破解
      */
+    await autoScroll(page);
+    
     await page.screenshot({
         path: 'auto_scroll.png',
         type: 'png',
@@ -62,13 +59,13 @@ const puppeteer = require('puppeteer');
         // }
     })
 
-    //获取元素在视窗内的相对位置
-    const pos = await getElementBounding(page, '.main-top');
-
     /**
      * 截图3
      * 元素精确截图
      */
+    //获取元素在视窗内的相对位置
+    const pos = await getElementBounding(page, '.main-top');
+
     await page.screenshot({
         path: 'element_bounding.png',
         type: 'png',
@@ -81,7 +78,7 @@ const puppeteer = require('puppeteer');
     })
 
     await browser.close();
-})();
+});
 
 async function autoScroll(page) {
     console.log('[AutoScroll begin]');
